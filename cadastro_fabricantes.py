@@ -12,7 +12,7 @@ def inserir_dados():
         cidade=input("cidade: ")
         tipo_fabrica =input("tipo da fabrica: ")
 
-        sql = "INSERT INTO fabricante (nome_fabrica,cnpj,telefone,email,cidade,tipo_fabrica) VALUES (%s, %s, %s,%s,%s,%s,)"
+        sql = "INSERT INTO fabricante (nome_fabrica,cnpj,telefone,email,cidade,tipo_fabrica) VALUES (%s, %s, %s,%s,%s,%s)"
         values = (nome_fabrica,cnpj,telefone,email,cidade,tipo_fabrica)
 
         cursor.execute(sql, values)
