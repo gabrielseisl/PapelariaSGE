@@ -3,6 +3,7 @@ from conexao import conectar
 
 def inserir_dados():
 
+    conexao = conectar()
     if conexao:
         cursor = conexao.cursor()
         nome_fabrica=input("nome: ")
