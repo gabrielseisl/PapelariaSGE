@@ -8,5 +8,5 @@ def conectar():
         password="",
         database="papelaria_sg"
     )
-    print("conectado")
+    print("você foi conectado com sucesso ao sistema da papelaria sge")
     return conexao
