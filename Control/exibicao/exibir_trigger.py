@@ -19,4 +19,5 @@ def exibir_logs_estoque():
 
         cursor.close()
         conexao.close()
+
    

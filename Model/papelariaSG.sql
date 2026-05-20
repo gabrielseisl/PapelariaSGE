@@ -96,3 +96,73 @@ forma_pagamento text not null,
 data_venda date not null,
 id_movimentacao int,
 foreign key (id_movimentacao) references movimentacao(id_movimentacao));
+
+DELIMITER $$
+
+CREATE TRIGGER tgr_after_update_estoque_cd
+AFTER UPDATE ON estoque_cd
+FOR EACH ROW
+BEGIN
+
+IF OLD.quantidade <> NEW.quantidade THEN
+INSERT INTO log_estoque_cd
+(id_estoque_cd, acao, valor_antigo, valor_novo, usuario)
+VALUES
+(OLD.id_estoque_cd, 'UPDATE_QUANTIDADE', OLD.quantidade, NEW.quantidade, USER());
+END IF;
+
+IF OLD.qtd_minima <> NEW.qtd_minima THEN
+INSERT INTO log_estoque_cd
+(id_estoque_cd, acao, valor_antigo, valor_novo, usuario)
+VALUES
+(OLD.id_estoque_cd, 'UPDATE_QTD_MINIMA', OLD.qtd_minima, NEW.qtd_minima, USER());
+END IF;
+
+IF OLD.qtd_maxima <> NEW.qtd_maxima THEN
+INSERT INTO log_estoque_cd
+(id_estoque_cd, acao, valor_antigo, valor_novo, usuario)
+VALUES
+(OLD.id_estoque_cd, 'UPDATE_QTD_MAXIMA', OLD.qtd_maxima, NEW.qtd_maxima, USER());
+END IF;
+END$$
+CREATE TABLE log_estoque_cd (
+    id_log INT AUTO_INCREMENT PRIMARY KEY,
+    id_estoque_cd INT,
+    acao VARCHAR(50),
+    valor_antigo VARCHAR(255),
+    valor_novo VARCHAR(255),
+    usuario VARCHAR(100),
+    data_alteracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+    
+   
+
+INSERT INTO fabricante
+(nome_fabrica, cnpj, telefone, email, cidade, tipo_fabrica)
+VALUES
+('Faber Castell', 12345678000199, 49999999999, 'contato@fabercastell.com', 'São Paulo', 'Material Escolar');
+
+INSERT INTO produto
+(nome, descricao, codigo_barras, preco_custo, unidade_medida, id_fabricante)
+VALUES
+('Caneta Azul', 'Caneta esferográfica azul', '7891234567890', 2.50, 1.00, 1);
+
+INSERT INTO fornecedor
+(nome_fornecedor, cnpj, telefone, email, prazo_entrega, id_produto)
+VALUES
+('Distribuidora PapelMax', 98765432000188, 49988887777, 'vendas@papelmax.com', '7 dias', 1);
+
+INSERT INTO pedido
+(data_pedido, data_entrega, valor_total, quantia_itens, entrega_status, id_fornecedor)
+VALUES
+('2026-05-20', '2026-05-27', 250.00, 100, 'Em transporte', 1);
+
+INSERT INTO estoque_cd
+(quantidade, prox_pedido, qtd_minima, qtd_maxima, local_estoque, id_pedido)
+VALUES
+(50, '2026-06-01', 10, 100, 'Corredor A - Prateleira 3', 1);
+
+
+    
+    UPDATE estoque_cd
+SET quantidade = 70
+WHERE id_estoque_cd = 2 ;

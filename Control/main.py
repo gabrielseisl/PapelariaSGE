@@ -40,7 +40,7 @@ while True:
     print("8 - Categoria🗂️")
     print("9 - Movimentação🚚")
     print("10 - Venda💸")
-    print("11-Alterações Estoque CD")
+    print("11-Alterações Estoque CD🔄")
 
     opcao = input("\nEscolha uma opção: ")
 
