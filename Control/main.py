@@ -20,6 +20,7 @@ from cadastro.cadastro_movimentacao import inserir_dados_movimentacao
 from exibicao.exibir_movimentacao import exibir_dados_movimentacao
 from cadastro.cadastro_venda import inserir_dados_vendas
 from exibicao.exibir_venda import exibir_vendas
+from exibicao.exibir_trigger import exibir_logs_estoque
 
 
 
@@ -27,17 +28,19 @@ while True:
     conexao = conectar()
 
     print("\n===== PAPELARIA SGE =====")
-    print("0 - Sair")
-    print("1 - Fabricante")
-    print("2 - Produto")
-    print("3 - Fornecedor")
-    print("4 - Pedido")
-    print("5 - Estoque CD")
-    print("6 - Loja")
-    print("7 - Estoque Loja")
-    print("8 - Categoria")
-    print("9 - Movimentação")
-    print("10 - Venda")
+    print("\n Bem Vindo(a) Ao Sistema💻")
+    print("0 - Sair❌")
+    print("1 - Fabricante🏭")
+    print("2 - Produto📦")
+    print("3 - Fornecedor🤝")
+    print("4 - Pedido📋")
+    print("5 - Estoque CD🛒")
+    print("6 - Loja🛍️")
+    print("7 - Estoque Loja💲")
+    print("8 - Categoria🗂️")
+    print("9 - Movimentação🚚")
+    print("10 - Venda💸")
+    print("11-Alterações Estoque CD")
 
     opcao = input("\nEscolha uma opção: ")
 
@@ -82,11 +85,16 @@ while True:
         inserir_dados_vendas()
         exibir_vendas()
 
+    elif opcao == "11":
+        exibir_logs_estoque()
+
+
+
     elif opcao == "0":
-        print("Sistema encerrado.")
+        print("Sistema encerrado👋.")
         break
 
     else:
-        print("Opção inválida.")
+        print("Opção inválida👎.")
 
 
