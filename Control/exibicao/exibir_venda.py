@@ -7,7 +7,7 @@ def exibir_vendas():
     if conexao:
         cursor = conexao.cursor()
 
-        cursor.execute("SELECT iquantidade, preco_venda, forma_pagamento, data_venda, id_movimentacao FROM venda")
+        cursor.execute("SELECT id_venda,quantidade, preco_venda, forma_pagamento, data_venda, id_movimentacao FROM venda")
         resultados = cursor.fetchall()
 
         print("\n Vendas:")

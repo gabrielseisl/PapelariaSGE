@@ -36,7 +36,7 @@ quantia_itens int not null,
 entrega_status text not null,
 id_fornecedor int,
 foreign key (id_fornecedor) references fornecedor (id_fornecedor));
-
+    
 create table estoque_cd (
 id_estoque_cd int auto_increment primary key,
 quantidade int not null,
@@ -99,6 +99,82 @@ foreign key (id_movimentacao) references movimentacao(id_movimentacao));
 
 DELIMITER $$
 
+CREATE TRIGGER tgr_after_update_produto 
+AFTER UPDATE ON produto
+FOR EACH ROW
+BEGIN
+
+IF OLD.preco_custo <> NEW.preco_custo THEN
+INSERT INTO log_produto
+(id_produto, acao, valor_antigo, valor_novo, usuario)
+VALUES
+(OLD.id_produto, 'UPDATE_PRODUTO', OLD.preco_custo, NEW.preco_custo, USER());
+END IF;
+
+IF OLD.preco_custo <> NEW.preco_custo THEN
+INSERT INTO log_produto
+(id_produto, acao, valor_antigo, valor_novo, usuario)
+VALUES
+(OLD.id_produto, 'UPDATE_PRODUTO', OLD.preco_custo, NEW.preco_custo, USER());
+END IF;
+
+IF OLD.preco_custo <> NEW.preco_custo THEN
+INSERT INTO produto
+(id_produto, acao, valor_antigo, valor_novo, usuario)
+VALUES
+(OLD.id_produto, 'UPDATE_PRODUTO', OLD.preco_custo, NEW.preco_custo, USER());
+END IF;
+END$$
+
+CREATE TABLE log_produto (
+    id_log_produto INT AUTO_INCREMENT PRIMARY KEY,
+    id_produto INT,
+    acao VARCHAR(50),
+    valor_antigo DECIMAL,
+    valor_novo DECIMAL,
+    usuario VARCHAR(100),
+    data_alteracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+
+DELIMITER $$
+
+CREATE TRIGGER tgr_after_update_pedido
+AFTER UPDATE ON pedido
+FOR EACH ROW
+BEGIN
+
+IF OLD.valor_total <> NEW.valor_total THEN
+INSERT INTO log_pedido
+(id_pedido, acao, valor_antigo, valor_novo, usuario)
+VALUES
+(OLD.id_pedido, 'UPDATE_VALOR', OLD.valor_total, NEW.valor_total, USER());
+END IF;
+
+IF OLD.valor_total <> NEW.valor_total THEN
+INSERT INTO log_pedido
+(id_pedido, acao, valor_antigo, valor_novo, usuario)
+VALUES
+(OLD.id_pedido, 'UPDATE_VALOR', OLD.valor_total, NEW.valor_total, USER());
+END IF;
+
+IF OLD.valor_total <> NEW.valor_total THEN
+INSERT INTO log_pedido
+(id_pedido, acao, valor_antigo, valor_novo, usuario)
+VALUES
+(OLD.id_pedido, 'UPDATE_VALOR', OLD.valor_total, NEW.valor_total, USER());
+END IF;
+END$$
+
+CREATE TABLE log_pedido (
+    id_log_pedido INT AUTO_INCREMENT PRIMARY KEY,
+    id_pedido INT,
+    acao VARCHAR(50),
+    valor_antigo DECIMAL,
+    valor_novo DECIMAL,
+    usuario VARCHAR(100),
+    data_alteracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+    
+DELIMITER $$
+
 CREATE TRIGGER tgr_after_update_estoque_cd
 AFTER UPDATE ON estoque_cd
 FOR EACH ROW
@@ -125,44 +201,164 @@ VALUES
 (OLD.id_estoque_cd, 'UPDATE_QTD_MAXIMA', OLD.qtd_maxima, NEW.qtd_maxima, USER());
 END IF;
 END$$
+
 CREATE TABLE log_estoque_cd (
-    id_log INT AUTO_INCREMENT PRIMARY KEY,
+    id_log_estoque_cd INT AUTO_INCREMENT PRIMARY KEY,
     id_estoque_cd INT,
     acao VARCHAR(50),
-    valor_antigo VARCHAR(255),
-    valor_novo VARCHAR(255),
+    valor_antigo INT,
+    valor_novo INT,
     usuario VARCHAR(100),
     data_alteracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
     
-   
+DELIMITER $$
 
-INSERT INTO fabricante
-(nome_fabrica, cnpj, telefone, email, cidade, tipo_fabrica)
+CREATE TRIGGER tgr_after_update_loja
+AFTER UPDATE ON loja
+FOR EACH ROW
+BEGIN
+
+IF OLD.endereco <> NEW.endereco THEN
+INSERT INTO log_loja
+(id_loja, acao, endereco_antigo, endereco_novo, usuario)
 VALUES
-('Faber Castell', 12345678000199, 49999999999, 'contato@fabercastell.com', 'São Paulo', 'Material Escolar');
+(OLD.id_loja, 'UPDATE_ENDERECO', OLD.endereco, NEW.endereco, USER());
+END IF;
 
-INSERT INTO produto
-(nome, descricao, codigo_barras, preco_custo, unidade_medida, id_fabricante)
+IF OLD.endereco <> NEW.endereco THEN
+INSERT INTO log_loja
+(id_loja, acao, endereco_antigo, endereco_novo, usuario)
 VALUES
-('Caneta Azul', 'Caneta esferográfica azul', '7891234567890', 2.50, 1.00, 1);
+(OLD.id_loja, 'UPDATE_ENDERECO', OLD.endereco, NEW.endereco, USER());
+END IF;
 
-INSERT INTO fornecedor
-(nome_fornecedor, cnpj, telefone, email, prazo_entrega, id_produto)
+IF OLD.endereco <> NEW.endereco THEN
+INSERT INTO log_loja
+(id_loja, acao, endereco_antigo, endereco_novo, usuario)
 VALUES
-('Distribuidora PapelMax', 98765432000188, 49988887777, 'vendas@papelmax.com', '7 dias', 1);
+(OLD.id_loja, 'UPDATE_ENDERECO', OLD.endereco, NEW.endereco, USER());
+END IF;
+END$$
 
-INSERT INTO pedido
-(data_pedido, data_entrega, valor_total, quantia_itens, entrega_status, id_fornecedor)
-VALUES
-('2026-05-20', '2026-05-27', 250.00, 100, 'Em transporte', 1);
-
-INSERT INTO estoque_cd
-(quantidade, prox_pedido, qtd_minima, qtd_maxima, local_estoque, id_pedido)
-VALUES
-(50, '2026-06-01', 10, 100, 'Corredor A - Prateleira 3', 1);
-
-
+CREATE TABLE log_loja (
+    id_log_loja INT AUTO_INCREMENT PRIMARY KEY,
+    id_loja INT,
+    acao VARCHAR(50),
+    endereco_antigo TEXT,
+    endereco_novo TEXT,
+    usuario VARCHAR(100),
+    data_alteracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
     
-    UPDATE estoque_cd
-SET quantidade = 70
-WHERE id_estoque_cd = 2 ;
+DELIMITER $$
+
+CREATE TRIGGER tgr_after_update_estoque_loja
+AFTER UPDATE ON estoque_loja
+FOR EACH ROW
+BEGIN
+
+IF OLD.quantidade <> NEW.quantidade THEN
+INSERT INTO log_estoque_loja
+(id_estoque_loja, acao, valor_antigo, valor_novo, usuario)
+VALUES
+(OLD.id_estoque_loja, 'UPDATE_QUANTIDADE', OLD.quantidade, NEW.quantidade, USER());
+END IF;
+
+IF OLD.qtd_minima <> NEW.qtd_minima THEN
+INSERT INTO log_estoque_loja
+(id_estoque_loja, acao, valor_antigo, valor_novo, usuario)
+VALUES
+(OLD.id_estoque_loja, 'UPDATE_QTD_MINIMA', OLD.qtd_minima, NEW.qtd_minima, USER());
+END IF;
+
+IF OLD.qtd_maxima <> NEW.qtd_maxima THEN
+INSERT INTO log_estoque_loja
+(id_estoque_loja, acao, valor_antigo, valor_novo, usuario)
+VALUES
+(OLD.id_estoque_loja, 'UPDATE_QTD_MAXIMA', OLD.qtd_maxima, NEW.qtd_maxima, USER());
+END IF;
+END$$
+
+CREATE TABLE log_estoque_loja (
+    id_log_estoque_loja INT AUTO_INCREMENT PRIMARY KEY,
+    id_estoque_loja INT,
+    acao VARCHAR(50),
+    valor_antigo INT,
+    valor_novo INT,
+    usuario VARCHAR(100),
+    data_alteracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+    
+DELIMITER $$
+
+CREATE TRIGGER tgr_after_update_movimentacao
+AFTER UPDATE ON movimentacao
+FOR EACH ROW
+BEGIN
+
+IF OLD.destino <> NEW.destino THEN
+INSERT INTO log_movimentacao
+(id_movimentacao, acao, destino_antigo, destino_novo, usuario)
+VALUES
+(OLD.id_movimentacao, 'UPDATE_DESTINO', OLD.destino, NEW.destino, USER());
+END IF;
+
+IF OLD.destino <> NEW.destino THEN
+INSERT INTO log_movimentacao
+(id_movimentacao, acao, destino_antigo, destino_novo, usuario)
+VALUES
+(OLD.id_movimentacao, 'UPDATE_DESTINO', OLD.destino, NEW.destino, USER());
+END IF;
+
+IF OLD.destino <> NEW.destino THEN
+INSERT INTO log_movimentacao
+(id_movimentacao, acao, destino_antigo, destino_novo, usuario)
+VALUES
+(OLD.id_movimentacao, 'UPDATE_DESTINO', OLD.destino, NEW.destino, USER());
+END IF;
+END$$
+
+CREATE TABLE log_movimentacao (
+    id_log_movimentacao INT AUTO_INCREMENT PRIMARY KEY,
+    id_movimentacao INT,
+    acao VARCHAR(50),
+    destino_antigo text,
+    destino_novo text,
+    usuario VARCHAR(100),
+    data_alteracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+    
+DELIMITER $$
+
+CREATE TRIGGER tgr_after_update_venda
+AFTER UPDATE ON venda
+FOR EACH ROW
+BEGIN
+
+IF OLD.lucro <> NEW.lucro THEN
+INSERT INTO log_venda
+(id_venda, acao, lucro_antigo, lucro_novo, usuario)
+VALUES
+(OLD.id_venda, 'UPDATE_LUCRO', OLD.lucro, NEW.lucro, USER());
+END IF;
+
+IF OLD.lucro <> NEW.lucro THEN
+INSERT INTO log_venda
+(id_venda, acao, lucro_antigo, lucro_novo, usuario)
+VALUES
+(OLD.id_venda, 'UPDATE_LUCRO', OLD.lucro, NEW.lucro, USER());
+END IF;
+
+IF OLD.lucro <> NEW.lucro THEN
+INSERT INTO log_venda
+(id_venda, acao, lucro_antigo, lucro_novo, usuario)
+VALUES
+(OLD.id_venda, 'UPDATE_LUCRO', OLD.lucro, NEW.lucro, USER());
+END IF;
+END$$
+
+CREATE TABLE log_venda (
+    id_log_venda INT AUTO_INCREMENT PRIMARY KEY,
+    id_venda INT,
+    acao VARCHAR(50),
+    lucro_antigo DECIMAL,
+    lucro_novo DECIMAL,
+    usuario VARCHAR(100),
+    data_alteracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP);

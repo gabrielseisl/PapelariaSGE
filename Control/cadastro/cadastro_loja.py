@@ -21,10 +21,22 @@ def inserir_dados_loja():
         endereco = input("Endereço: ")
         telefone = input("Telefone: ")
         gerente = input("Gerente: ")
+
+        sql = """
+        select 
+            id_estoque_cd, quantidade, local_estoque, prox_pedido
+        from estoque_cd
+        """
+        cursor.execute(sql)
+        resultados = cursor.fetchall()
+
+        print ("\nEstoques CD disponíveis: ")
+        for dado in resultados:
+            print (f"ID: |{dado[0]} |" f"Quantia: {dado[1]} |" f"Local: {dado[2]} |" f"|Próximo pedido: {dado[3]}")
+        
         id_estoque_cd = int(input("ID do estoque CD: "))
 
         sql = "INSERT INTO loja (nome_loja, cnpj, endereco, telefone, gerente, id_estoque_cd) VALUES (%s, %s, %s, %s, %s, %s)"
-
         values = (nome_loja, cnpj, endereco, telefone, gerente, id_estoque_cd)
 
         cursor.execute(sql, values)

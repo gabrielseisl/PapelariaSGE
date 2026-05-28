@@ -6,7 +6,6 @@ def conectar():
         host="localhost",
         user="root",
         password="",
-        database="papelaria_sg"
+        database="papelaria_sge"
     )
-    print("você foi conectado com sucesso ao sistema da papelaria sge")
     return conexao
